@@ -1,52 +1,31 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import axios from 'axios';
+
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import CircularProgress from 'material-ui/CircularProgress';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import Pagination from 'material-ui-pagination';
 
+import * as playerListActions from '../../redux/actions/playerListActions';
 import style from './style.js';
 import dateUtil from '../../utils/dateUtil';
 
 class AvailablePlayersList extends Component {
     state = {
-        playersOnThisPage: [],
-        allPlayers: [],
-        activePage: 1,
         open: false,
         dialogPlayer: 0,
         dialogNotes: []
     }
 
-    PLAYERS_PER_PAGE = 20;
-
-    discoverPlayers(iteration) {
-        axios.get('http://api.fantasy.nfl.com/v1/players/editordraftranks/', {params: {format: 'json', count: 100, offset: 100*iteration}})
-            .then((res) => {
-                this.setState((prevState) => {
-                    return {
-                        allPlayers: [...prevState.allPlayers, ...res.data.players]
-                    }
-                }, () => { 
-                    if (res.data.players.length > 0) { // there might be more players, recursively discover more
-                        this.discoverPlayers(iteration + 1)
-                    } else {
-                        this.setState({
-                            loading: false,
-                            activePage: 1
-                        }, () => {this.handlePageChange(1);}); // set the page to page 1
-                    }
-                });
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+    discoverPlayers() {
+        this.props.playerListActions.discoverPlayers(0, 100);
     }
 
     componentDidMount() {
-        this.setState({loading: true});
-        this.discoverPlayers(0);
+        this.discoverPlayers();
     }
 
     getPlayerInfo = (playerId) => {
@@ -61,14 +40,11 @@ class AvailablePlayersList extends Component {
     }
 
     handlePageChange = (pageNumber) => {
-        this.setState((prevState) => {
-            const pageStartIndex = this.PLAYERS_PER_PAGE * (pageNumber - 1);
-            const pageEndIndex = pageStartIndex + this.PLAYERS_PER_PAGE;
-            return {
-                activePage: pageNumber,
-                playersOnThisPage: prevState.allPlayers.slice(pageStartIndex, pageEndIndex)
-            }
-        });
+        this.props.playerListActions.setCurrentPageNumber(pageNumber);
+
+        const pageStartIndex = this.props.numberOfPlayersPerPage * (pageNumber - 1);
+        const pageEndIndex = pageStartIndex + this.props.numberOfPlayersPerPage;
+        this.props.playerListActions.setPlayersOnThisPage(this.props.allPlayers.slice(pageStartIndex, pageEndIndex))
     }
 
     openDialog = (playerId) => {
@@ -89,7 +65,7 @@ class AvailablePlayersList extends Component {
             />,
         ];
 
-        if (this.state.loading) {
+        if (this.props.discoveringPlayers) {
             return (
                 <div style={style.loading}>
                     <div style={style.loadingMessage}>Getting the latest player rankings</div>
@@ -129,7 +105,7 @@ class AvailablePlayersList extends Component {
                         </TableHeader>
                         <TableBody>
                             {
-                                this.state.playersOnThisPage.map((player) => { 
+                                this.props.playersOnThisPage.map((player) => { 
                                     return (
                                         <TableRow key={player.id}>
                                             <TableRowColumn>{player.firstName + ' ' + player.lastName}</TableRowColumn>
@@ -145,9 +121,9 @@ class AvailablePlayersList extends Component {
                         </TableBody>
                     </Table>
                     <Pagination
-                        current={this.state.activePage}
-                        total={10}
-                        display={5}
+                        current={this.props.currentPageNumber}
+                        total={this.props.allPlayers.length / this.props.numberOfPlayersPerPage}
+                        display={5} // show this many page numbers between the < and > arrows
                         onChange={this.handlePageChange}
                     />
                 </div>
@@ -156,4 +132,21 @@ class AvailablePlayersList extends Component {
     }
 }
 
-export default AvailablePlayersList;
+
+const mapStateToProps = (state, props) => {
+	return {
+		discoveringPlayers: state.playerList.discoveringPlayers,
+        allPlayers: state.playerList.allPlayers,
+        playersOnThisPage: state.playerList.playersOnThisPage,
+        numberOfPlayersPerPage: state.playerList.numberOfPlayersPerPage,
+        currentPageNumber: state.playerList.currentPageNumber,
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    playerListActions: bindActionCreators(playerListActions, dispatch)
+  }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AvailablePlayersList);
