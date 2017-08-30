@@ -52,6 +52,27 @@ class AvailablePlayersList extends Component {
         this.setState({ open: false });
     }
 
+    getDialogBody = () => {
+        if (this.state.dialogNotes.length === 0) {
+            return (
+                <div>No recent news</div>
+            )
+        } else {
+            return this.state.dialogNotes.map((note) => {
+                return (
+                    <div key={note.id}>
+                        <h3 style={{fontStyle: 'italic', fontWeight: 400}}>{dateUtil.getPrettyDate(note.timestamp)}</h3>
+                        <h4 style={{fontWeight: 'bold'}}>Story</h4>
+                        <div>{note.body}</div>
+                        <h4 style={{fontWeight: 'bold'}}>Analysis</h4>
+                        <div>{note.analysis}</div>
+                        <hr/>
+                    </div>
+                )
+            });
+        }
+    }
+
     render() {
         const actions = [
             <FlatButton
@@ -79,25 +100,16 @@ class AvailablePlayersList extends Component {
                         onRequestClose={this.handleClose}
                         autoScrollBodyContent={true}
                     >
-                        {this.state.dialogNotes.map((note) => {
-                            return (
-                                <div>
-                                    <h3 style={{fontStyle: 'italic', fontWeight: 400}}>{dateUtil.getPrettyDate(note.timestamp)}</h3>
-                                    <h4 style={{fontWeight: 'bold'}}>Story</h4>
-                                    <div>{note.body}</div>
-                                    <h4 style={{fontWeight: 'bold'}}>Analysis</h4>
-                                    <div>{note.analysis}</div>
-                                    <hr/>
-                                </div>
-                            )
-                        })}
+                        {this.getDialogBody()}
                     </Dialog>
                     <Table>
                         <TableHeader>
-                            <TableHeaderColumn>Player Name</TableHeaderColumn>
-                            <TableHeaderColumn>Position</TableHeaderColumn>
-                            <TableHeaderColumn>Team</TableHeaderColumn>
-                            <TableHeaderColumn>Details</TableHeaderColumn>
+                            <TableRow>
+                                <TableHeaderColumn>Player Name</TableHeaderColumn>
+                                <TableHeaderColumn>Position</TableHeaderColumn>
+                                <TableHeaderColumn>Team</TableHeaderColumn>
+                                <TableHeaderColumn>Details</TableHeaderColumn>
+                            </TableRow>
                         </TableHeader>
                         <TableBody>
                             {
