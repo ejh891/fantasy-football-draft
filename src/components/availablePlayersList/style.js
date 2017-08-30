@@ -9,6 +9,9 @@ const style = {
         width: '100vw',
     },
 
+    loadingMessage: {
+        marginBottom: '10px',
+    }
 }
 
 export default style;
