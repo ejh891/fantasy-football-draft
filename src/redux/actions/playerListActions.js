@@ -39,7 +39,9 @@ export function addChunkOfPlayers(players) {
 }
 
 // async actions (via Thunk middleware)
-export function discoverPlayers(offset, count) {
+export function discoverPlayers(offset) {
+    if (!offset) { offset = 0; }
+    
     return (dispatch, getState) => {
         const { playerList } = getState();
 
@@ -48,6 +50,7 @@ export function discoverPlayers(offset, count) {
         }
 
         // ref: http://api.fantasy.nfl.com/v1/docs/service?serviceName=playersEditorDraftRanks
+        const count = 100; // max allowed by api
         axios.get('http://api.fantasy.nfl.com/v1/players/editordraftranks/', {
             params: {
                 format: 'json',

@@ -20,12 +20,8 @@ class AvailablePlayersList extends Component {
         dialogNotes: []
     }
 
-    discoverPlayers() {
-        this.props.playerListActions.discoverPlayers(0, 100);
-    }
-
     componentDidMount() {
-        this.discoverPlayers();
+        this.props.playerListActions.discoverPlayers();
     }
 
     getPlayerInfo = (playerId) => {
