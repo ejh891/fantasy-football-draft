@@ -13,7 +13,7 @@ import * as playerListActions from '../../redux/actions/playerListActions';
 import style from './style.js';
 import dateUtil from '../../utils/dateUtil';
 
-class AvailablePlayersList extends Component {
+class PlayerList extends Component {
     state = {
         open: false,
         dialogPlayer: 0,
@@ -157,4 +157,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AvailablePlayersList);
+export default connect(mapStateToProps, mapDispatchToProps)(PlayerList);
