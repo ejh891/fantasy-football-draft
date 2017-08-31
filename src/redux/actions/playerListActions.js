@@ -51,6 +51,14 @@ export function setPlayerDetails(playerId, playerDetails) {
     }
 }
 
+let positionCounter = {
+    QB: 0,
+    RB: 0,
+    WR: 0,
+    TE: 0,
+    K: 0,
+    DEF: 0,
+}
 // async actions (via Thunk middleware)
 export function discoverPlayers(offset) {
     if (!offset) { offset = 0; }
@@ -74,12 +82,15 @@ export function discoverPlayers(offset) {
             .then((res) => {
                 if (res.data.players.length > 0) { // there might be more players, recursively discover more
                     const players = res.data.players.map((playerData) => {
+                        positionCounter[playerData.position]++;
                         return new Player({
                             id: playerData.id, 
                             firstName: playerData.firstName, 
                             lastName: playerData.lastName,
                             position: playerData.position,
                             teamAbbr: playerData.teamAbbr,
+                            overallRank: playerData.rank,
+                            positionalRank: positionCounter[playerData.position]
                         });
                     });
 

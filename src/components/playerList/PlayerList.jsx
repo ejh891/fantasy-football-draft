@@ -12,7 +12,7 @@ import Pagination from 'material-ui-pagination';
 import PlayerDetailsPop from './PlayerDetailsPop';
 import * as playerListActions from '../../redux/actions/playerListActions';
 import * as playerDetailsPopActions from '../../redux/actions/playerDetailsPopActions';
-import style from './style.js';
+import style from './playerListStyle.js';
 import dateUtil from '../../utils/dateUtil';
 
 class PlayerList extends Component {
@@ -54,6 +54,8 @@ class PlayerList extends Component {
                     <Table>
                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                             <TableRow>
+                                <TableHeaderColumn>Overall Rank</TableHeaderColumn>
+                                <TableHeaderColumn>Positional Rank</TableHeaderColumn>
                                 <TableHeaderColumn>Player Name</TableHeaderColumn>
                                 <TableHeaderColumn>Position</TableHeaderColumn>
                                 <TableHeaderColumn>Team</TableHeaderColumn>
@@ -64,6 +66,8 @@ class PlayerList extends Component {
                                 this.props.playersOnThisPage.map((player) => { 
                                     return (
                                         <TableRow key={player.id}>
+                                            <TableRowColumn>{player.overallRank}</TableRowColumn>
+                                            <TableRowColumn>{player.positionalRank}</TableRowColumn>
                                             <TableRowColumn>
                                                 <a style={style.playerName} onClick={() => {this.openDialog(player)}}>
                                                     {player.fullName}
