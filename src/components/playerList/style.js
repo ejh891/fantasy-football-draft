@@ -11,6 +11,10 @@ const style = {
 
     loadingMessage: {
         marginBottom: '10px',
+    },
+
+    playerName: {
+        cursor: 'pointer',
     }
 }
 

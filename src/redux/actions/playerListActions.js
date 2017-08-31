@@ -1,6 +1,9 @@
 import * as actionTypes from './actionTypes';
 import axios from 'axios';
 
+import Player from '../../entities/Player';
+import * as playerDetailsPopActions from './playerDetailsPopActions';
+
 // bool to determine whether or not we are currently discovering players
 export function setDiscoveringPlayers(discoveringPlayers) {
     return {
@@ -38,6 +41,16 @@ export function addChunkOfPlayers(players) {
     };
 }
 
+
+// sets the player details for the current player focused by the pop
+export function setPlayerDetails(playerId, playerDetails) {
+    return {
+        type: actionTypes.SET_PLAYER_DETAILS,
+        playerId,
+        playerDetails
+    }
+}
+
 // async actions (via Thunk middleware)
 export function discoverPlayers(offset) {
     if (!offset) { offset = 0; }
@@ -60,7 +73,17 @@ export function discoverPlayers(offset) {
         })
             .then((res) => {
                 if (res.data.players.length > 0) { // there might be more players, recursively discover more
-                    dispatch(addChunkOfPlayers(res.data.players));
+                    const players = res.data.players.map((playerData) => {
+                        return new Player({
+                            id: playerData.id, 
+                            firstName: playerData.firstName, 
+                            lastName: playerData.lastName,
+                            position: playerData.position,
+                            teamAbbr: playerData.teamAbbr,
+                        });
+                    });
+
+                    dispatch(addChunkOfPlayers(players));
                     dispatch(discoverPlayers(offset + count, count))    
                 } else {
                     dispatch(setDiscoveringPlayers(false));
@@ -69,6 +92,18 @@ export function discoverPlayers(offset) {
             })
             .catch((err) => {
                 console.error(err);
+            });
+    }
+}
+
+export function discoverPlayerDetails(playerId) {
+    return (dispatch, getState) => {
+        const { playerDetailsPop } = getState();
+
+        axios.get('http://api.fantasy.nfl.com/v1/players/details', {params: {playerId: playerId}})
+            .then((res) => {
+                dispatch(setPlayerDetails(playerId, res.data.players[0]));
+                dispatch(playerDetailsPopActions.setPlayerDetailsPopLoading(false));
             });
     }
 }

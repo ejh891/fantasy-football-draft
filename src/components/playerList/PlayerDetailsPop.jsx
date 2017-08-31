@@ -6,42 +6,25 @@ import axios from 'axios';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
-import * as playerListActions from '../../redux/actions/playerListActions';
+import * as playerDetailsPopActions from '../../redux/actions/playerDetailsPopActions';
 import dateUtil from '../../utils/dateUtil';
 
 class PlayerDetailsPop extends Component {
-    state = {
-        open: false,
-        dialogNotes: []
-    }
-
-    getPlayerInfo = (playerId) => {
-        axios.get('http://api.fantasy.nfl.com/v1/players/details', {params: {playerId: playerId}})
-            .then((res) => {
-                console.log(res);
-                this.setState({
-                    dialogPlayerName: res.data.players[0].name,
-                    dialogNotes: res.data.players[0].notes
-                });
-            });
-    }
-
-    openDialog = (playerId) => {
-        this.setState({ open: true, dialogPlayer: playerId });
-        this.getPlayerInfo(playerId);
-    }
-
     handleClose = () => {
-        this.setState({ open: false });
+        this.props.playerDetailsPopActions.setPlayerDetailsPopOpen(false);
     }
 
     getDialogBody = () => {
-        if (this.state.dialogNotes.length === 0) {
+        if (this.props.playerDetailsPopLoading) {
+            return (<div>Loading</div>);
+        }
+
+        if (this.props.playerDetailsPopPlayer.notes.length === 0) {
             return (
                 <div>No recent news</div>
             )
         } else {
-            return this.state.dialogNotes.map((note) => {
+            return this.props.playerDetailsPopPlayer.notes.map((note) => {
                 return (
                     <div key={note.id}>
                         <h3 style={{fontStyle: 'italic', fontWeight: 400}}>{dateUtil.getPrettyDate(note.timestamp)}</h3>
@@ -57,6 +40,8 @@ class PlayerDetailsPop extends Component {
     }
 
     render() {
+        if (!this.props.playerDetailsPopPlayer) { return null; }
+
         const actions = [
             <FlatButton
                 label="Close"
@@ -67,10 +52,10 @@ class PlayerDetailsPop extends Component {
 
         return (
             <Dialog
-                title={this.state.dialogPlayerName}
+                title={this.props.playerDetailsPopPlayer.name}
                 actions={actions}
                 modal={false}
-                open={this.state.open}
+                open={this.props.playerDetailsPopOpen}
                 onRequestClose={this.handleClose}
                 autoScrollBodyContent={true}
             >
@@ -83,12 +68,16 @@ class PlayerDetailsPop extends Component {
 
 const mapStateToProps = (state, props) => {
 	return {
+        playerDetailsPopLoading: state.playerDetailsPop.playerDetailsPopLoading,
+        playerDetailsPopOpen: state.playerDetailsPop.playerDetailsPopOpen,
+        playerDetailsPopPlayer: state.playerDetailsPop.playerDetailsPopPlayer,
 	};
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-  }
+    return {
+        playerDetailsPopActions: bindActionCreators(playerDetailsPopActions, dispatch)
+    }
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayerDetailsPop);

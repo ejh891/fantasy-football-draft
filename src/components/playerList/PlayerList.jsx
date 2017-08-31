@@ -9,30 +9,15 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import Pagination from 'material-ui-pagination';
 
+import PlayerDetailsPop from './PlayerDetailsPop';
 import * as playerListActions from '../../redux/actions/playerListActions';
+import * as playerDetailsPopActions from '../../redux/actions/playerDetailsPopActions';
 import style from './style.js';
 import dateUtil from '../../utils/dateUtil';
 
 class PlayerList extends Component {
-    state = {
-        open: false,
-        dialogPlayer: 0,
-        dialogNotes: []
-    }
-
     componentDidMount() {
         this.props.playerListActions.discoverPlayers();
-    }
-
-    getPlayerInfo = (playerId) => {
-        axios.get('http://api.fantasy.nfl.com/v1/players/details', {params: {playerId: playerId}})
-            .then((res) => {
-                console.log(res);
-                this.setState({
-                    dialogPlayerName: res.data.players[0].name,
-                    dialogNotes: res.data.players[0].notes
-                });
-            });
     }
 
     handlePageChange = (pageNumber) => {
@@ -43,45 +28,18 @@ class PlayerList extends Component {
         this.props.playerListActions.setPlayersOnThisPage(this.props.allPlayers.slice(pageStartIndex, pageEndIndex))
     }
 
-    openDialog = (playerId) => {
-        this.setState({ open: true, dialogPlayer: playerId });
-        this.getPlayerInfo(playerId);
-    }
-
-    handleClose = () => {
-        this.setState({ open: false });
-    }
-
-    getDialogBody = () => {
-        if (this.state.dialogNotes.length === 0) {
-            return (
-                <div>No recent news</div>
-            )
-        } else {
-            return this.state.dialogNotes.map((note) => {
-                return (
-                    <div key={note.id}>
-                        <h3 style={{fontStyle: 'italic', fontWeight: 400}}>{dateUtil.getPrettyDate(note.timestamp)}</h3>
-                        <h4 style={{fontWeight: 'bold'}}>Story</h4>
-                        <div>{note.body}</div>
-                        <h4 style={{fontWeight: 'bold'}}>Analysis</h4>
-                        <div>{note.analysis}</div>
-                        <hr/>
-                    </div>
-                )
-            });
+    openDialog = (player) => {
+        this.props.playerDetailsPopActions.setPlayerDetailsPopPlayer(player);
+        
+        if (!player.notes) {
+            this.props.playerDetailsPopActions.setPlayerDetailsPopLoading(true);
+            this.props.playerListActions.discoverPlayerDetails(player.id);
         }
+
+        this.props.playerDetailsPopActions.setPlayerDetailsPopOpen(true);
     }
 
     render() {
-        const actions = [
-            <FlatButton
-                label="Close"
-                primary={true}
-                onClick={this.handleClose}
-            />,
-        ];
-
         if (this.props.discoveringPlayers) {
             return (
                 <div style={style.loading}>
@@ -92,36 +50,27 @@ class PlayerList extends Component {
         } else {
             return (
                 <div>
-                     <Dialog
-                        title={this.state.dialogPlayerName}
-                        actions={actions}
-                        modal={false}
-                        open={this.state.open}
-                        onRequestClose={this.handleClose}
-                        autoScrollBodyContent={true}
-                    >
-                        {this.getDialogBody()}
-                    </Dialog>
+                    <PlayerDetailsPop />
                     <Table>
-                        <TableHeader>
+                        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                             <TableRow>
                                 <TableHeaderColumn>Player Name</TableHeaderColumn>
                                 <TableHeaderColumn>Position</TableHeaderColumn>
                                 <TableHeaderColumn>Team</TableHeaderColumn>
-                                <TableHeaderColumn>Details</TableHeaderColumn>
                             </TableRow>
                         </TableHeader>
-                        <TableBody>
+                        <TableBody displayRowCheckbox={false}>
                             {
                                 this.props.playersOnThisPage.map((player) => { 
                                     return (
                                         <TableRow key={player.id}>
-                                            <TableRowColumn>{player.firstName + ' ' + player.lastName}</TableRowColumn>
+                                            <TableRowColumn>
+                                                <a style={style.playerName} onClick={() => {this.openDialog(player)}}>
+                                                    {player.fullName}
+                                                </a>
+                                            </TableRowColumn>
                                             <TableRowColumn>{player.position}</TableRowColumn>
                                             <TableRowColumn>{player.teamAbbr}</TableRowColumn>
-                                            <TableRowColumn>
-                                                <button onClick={() => {this.openDialog(player.id)}}>Click me!</button>
-                                            </TableRowColumn>
                                         </TableRow>
                                     );
                                 })
@@ -152,9 +101,10 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    playerListActions: bindActionCreators(playerListActions, dispatch)
-  }
+    return {
+        playerListActions: bindActionCreators(playerListActions, dispatch),
+        playerDetailsPopActions: bindActionCreators(playerDetailsPopActions, dispatch),
+    }
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayerList);
