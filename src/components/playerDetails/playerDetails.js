@@ -36,9 +36,10 @@ class PlayerDetails extends Component {
                     <div>{'Overall rank: ' + player.overallRank}</div>
                     <div>{player.position + ' rank: ' + player.positionalRank}</div>
                     {this.props.playerDetailsPlayer.notes.map((note) => {
+                        const dateData = dateUtil.parseTimestamp(note.timestamp);
                         return (
                             <div key={note.id}>
-                                <h3 style={{fontStyle: 'italic', fontWeight: 400}}>{dateUtil.getPrettyDate(note.timestamp)}</h3>
+                                <h3 style={{fontStyle: 'italic', fontWeight: 400}}>{dateData.date + ' (' + dateData.fromNow + ')'}</h3>
                                 <h4 style={{fontWeight: 'bold'}}>Story</h4>
                                 <div>{note.body}</div>
                                 <h4 style={{fontWeight: 'bold'}}>Analysis</h4>
