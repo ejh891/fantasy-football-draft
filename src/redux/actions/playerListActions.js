@@ -111,8 +111,14 @@ export function discoverPlayerDetails(playerId) {
     return (dispatch, getState) => {
         const { playerDetailsPop } = getState();
 
-        axios.get('http://api.fantasy.nfl.com/v1/players/details', {params: {playerId: playerId}})
+        // http://api.fantasy.nfl.com/v1/docs/service?serviceName=playersDetails
+        axios.get('http://api.fantasy.nfl.com/v1/players/details', {
+            params: {
+                playerId: playerId
+            }
+        })
             .then((res) => {
+                console.log(res);
                 dispatch(setPlayerDetails(playerId, res.data.players[0]));
                 dispatch(playerDetailsPopActions.setPlayerDetailsPopLoading(false));
             });
