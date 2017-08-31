@@ -15,6 +15,8 @@ import * as filterDrawerActions from '../../redux/actions/filterDrawerActions';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 import FilterDrawer from './filterDrawer';
 import appPages from '../../enums/appPages';
+import nflTeams from '../../data/nflTeams';
+import colorUtil from '../../utils/colorUtil';
 
 class PlayerList extends Component {
     componentDidMount() {
@@ -79,9 +81,20 @@ class PlayerList extends Component {
                         </TableHeader>
                         <TableBody displayRowCheckbox={false}>
                             {
-                                this.getPlayersOnThisPage().map((player) => { 
+                                this.getPlayersOnThisPage().map((player) => {
+                                    const team = nflTeams[player.teamAbbr];
+                                    const rgb1 = colorUtil.hexToRgb(team.colors[0]);
+                                    const rgb2 = colorUtil.hexToRgb(team.colors[1]);
+
+                                    const rgba1 = `rgba(${rgb1.r},${rgb1.g},${rgb1.b},0.5)`;
+                                    const rgba2 = `rgba(${rgb2.r},${rgb2.g},${rgb2.b},0.5)`;
+
+                                    const rowStyle = {
+                                        backgroundImage: `linear-gradient(to right, ${rgba1}, ${rgba2})`
+                                    }; 
+
                                     return (
-                                        <TableRow key={player.id}>
+                                        <TableRow key={player.id} style={rowStyle}>
                                             <TableRowColumn>{player.overallRank}</TableRowColumn>
                                             <TableRowColumn>{player.fullName}</TableRowColumn>
                                             <TableRowColumn>{player.position}</TableRowColumn>
