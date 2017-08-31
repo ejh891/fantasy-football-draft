@@ -7,8 +7,8 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import './app.css';
 import * as appActions from '../../redux/actions/appActions';
 import appPages from '../../enums/appPages';
-import PlayerList from '../playerList/PlayerList';
-import PlayerDetails from '../playerDetails/PlayerDetails';
+import PlayerList from '../playerList/playerList';
+import PlayerDetails from '../playerDetails/playerDetails';
 
 // Needed for onTouchTap 
 // http://stackoverflow.com/a/34015469/988941 

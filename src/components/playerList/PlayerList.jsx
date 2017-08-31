@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import axios from 'axios';
 
 import AppBar from 'material-ui/AppBar';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
+import IconButton from 'material-ui/IconButton';
+import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
 import Pagination from 'material-ui-pagination';
 
 import * as appActions from '../../redux/actions/appActions';
 import * as playerListActions from '../../redux/actions/playerListActions';
 import * as playerDetailsActions from '../../redux/actions/playerDetailsActions';
-import LoadingSpinner from '../loadingSpinner/LoadingSpinner';
+import * as filterDrawerActions from '../../redux/actions/filterDrawerActions';
+import LoadingSpinner from '../loadingSpinner/loadingSpinner';
+import FilterDrawer from './filterDrawer';
 import appPages from '../../enums/appPages';
 
 class PlayerList extends Component {
@@ -20,19 +23,22 @@ class PlayerList extends Component {
         }
     }
 
+    getPlayersOnThisPage = () => {
+        const pageStartIndex = this.props.numberOfPlayersPerPage * (this.props.currentPageNumber - 1);
+        const pageEndIndex = pageStartIndex + this.props.numberOfPlayersPerPage;
+        
+        return this.props.filteredPlayers.slice(pageStartIndex, pageEndIndex);
+    }
+
     handlePageChange = (pageNumber) => {
         this.props.playerListActions.setCurrentPageNumber(pageNumber);
-
-        const pageStartIndex = this.props.numberOfPlayersPerPage * (pageNumber - 1);
-        const pageEndIndex = pageStartIndex + this.props.numberOfPlayersPerPage;
-        this.props.playerListActions.setPlayersOnThisPage(this.props.allPlayers.slice(pageStartIndex, pageEndIndex))
     }
 
     onRowSelection = (selectedRowNumbers) => {
         let selectedRowNumber = selectedRowNumbers[0]; // row on this page
         const previousRows = (this.props.currentPageNumber - 1) * this.props.numberOfPlayersPerPage // rows on previous pages
         const playerIndex = previousRows + selectedRowNumber;
-        const player = this.props.allPlayers[playerIndex];
+        const player = this.props.filteredPlayers[playerIndex];
         this.openDetailsPage(player);
     }
 
@@ -45,6 +51,10 @@ class PlayerList extends Component {
         }
 
         this.props.appActions.setCurrentAppPage(appPages.playerDetails);
+    }
+
+    openFilterDrawer = () => {
+        this.props.filterDrawerActions.setFilterDrawerOpen(true);
     }
 
     getPageContent = () => {
@@ -61,6 +71,7 @@ class PlayerList extends Component {
                     >
                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                             <TableRow>
+                                <TableHeaderColumn>Rank</TableHeaderColumn>
                                 <TableHeaderColumn>Player Name</TableHeaderColumn>
                                 <TableHeaderColumn>Position</TableHeaderColumn>
                                 <TableHeaderColumn>Team</TableHeaderColumn>
@@ -68,9 +79,10 @@ class PlayerList extends Component {
                         </TableHeader>
                         <TableBody displayRowCheckbox={false}>
                             {
-                                this.props.playersOnThisPage.map((player) => { 
+                                this.getPlayersOnThisPage().map((player) => { 
                                     return (
                                         <TableRow key={player.id}>
+                                            <TableRowColumn>{player.overallRank}</TableRowColumn>
                                             <TableRowColumn>{player.fullName}</TableRowColumn>
                                             <TableRowColumn>{player.position}</TableRowColumn>
                                             <TableRowColumn>{player.teamAbbr}</TableRowColumn>
@@ -94,18 +106,28 @@ class PlayerList extends Component {
     render() {
         return (
             <div>
-                <AppBar title={'Players'}/>
+                <AppBar 
+                    title={'Players'}
+                    iconElementLeft={
+                        <IconButton
+                            onTouchTap={this.openFilterDrawer}
+                        >
+                            <NavigationMenu />
+                        </IconButton>
+                    }
+                />
+                <FilterDrawer/>
                 {this.getPageContent()}
             </div>
         )
     }
 }
 
-
 const mapStateToProps = (state, props) => {
 	return {
 		discoveringPlayers: state.playerList.discoveringPlayers,
         allPlayers: state.playerList.allPlayers,
+        filteredPlayers: state.playerList.filteredPlayers,
         playersOnThisPage: state.playerList.playersOnThisPage,
         numberOfPlayersPerPage: state.playerList.numberOfPlayersPerPage,
         currentPageNumber: state.playerList.currentPageNumber,
@@ -117,6 +139,7 @@ const mapDispatchToProps = (dispatch) => {
         appActions: bindActionCreators(appActions, dispatch),
         playerListActions: bindActionCreators(playerListActions, dispatch),
         playerDetailsActions: bindActionCreators(playerDetailsActions, dispatch),
+        filterDrawerActions: bindActionCreators(filterDrawerActions, dispatch),
     }
 };
 

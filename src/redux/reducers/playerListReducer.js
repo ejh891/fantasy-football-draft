@@ -2,10 +2,10 @@ import * as actionTypes from '../actions/actionTypes';
 
 const defaultState = {
     allPlayers: [],
+    filteredPlayers: [],
     discoveringPlayers: false,
     currentPageNumber: 1,
     numberOfPlayersPerPage: 20,
-    playersOnThisPage: [],
 }
 
 export default (state = defaultState, action) => {
@@ -25,11 +25,6 @@ export default (state = defaultState, action) => {
                 ...state,
                 numberOfPlayersPerPage: action.numberOfPlayersPerPage
             }
-        case actionTypes.SET_PLAYERS_ON_THIS_PAGE:
-            return {
-                ...state,
-                playersOnThisPage: action.playersOnThisPage
-            }
         case actionTypes.ADD_CHUNK_OF_PLAYERS:
             return {
                 ...state,
@@ -47,6 +42,11 @@ export default (state = defaultState, action) => {
             return {
                 ...state,
                 allPlayers: modifiedAllPlayersClone
+            }
+        case actionTypes.SET_FILTERED_PLAYERS:
+            return {
+                ...state,
+                filteredPlayers: action.filteredPlayers
             }
         default:
             return state;

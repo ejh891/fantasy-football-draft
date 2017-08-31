@@ -26,13 +26,6 @@ export function setNumberOfPlayersPerPage(numberOfPlayersPerPage) {
     }
 }
 
-export function setPlayersOnThisPage(playersOnThisPage) {
-    return {
-        type: actionTypes.SET_PLAYERS_ON_THIS_PAGE,
-        playersOnThisPage
-    }
-}
-
 // adds a chunk of players to the all players list
 export function addChunkOfPlayers(players) {
     return {
@@ -48,6 +41,13 @@ export function setPlayerDetails(playerId, playerDetails) {
         type: actionTypes.SET_PLAYER_DETAILS,
         playerId,
         playerDetails
+    }
+}
+
+export function setFilteredPlayers(filteredPlayers) {
+    return {
+        type: actionTypes.SET_FILTERED_PLAYERS,
+        filteredPlayers
     }
 }
 
@@ -97,8 +97,8 @@ export function discoverPlayers(offset) {
                     dispatch(addChunkOfPlayers(players));
                     dispatch(discoverPlayers(offset + count, count))    
                 } else {
+                    dispatch(setFilteredPlayers(playerList.allPlayers));
                     dispatch(setDiscoveringPlayers(false));
-                    dispatch(setPlayersOnThisPage(playerList.allPlayers.slice(0, playerList.numberOfPlayersPerPage)));
                 }
             })
             .catch((err) => {

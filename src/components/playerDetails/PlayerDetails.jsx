@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import axios from 'axios';
 
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
@@ -9,7 +8,7 @@ import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left
 
 import * as appActions from '../../redux/actions/appActions';
 import * as playerDetailsActions from '../../redux/actions/playerDetailsActions';
-import LoadingSpinner from '../loadingSpinner/LoadingSpinner';
+import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 import dateUtil from '../../utils/dateUtil';
 import appPages from '../../enums/appPages';
 
