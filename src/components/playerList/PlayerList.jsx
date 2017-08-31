@@ -3,21 +3,21 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import axios from 'axios';
 
+import AppBar from 'material-ui/AppBar';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
-import CircularProgress from 'material-ui/CircularProgress';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
 import Pagination from 'material-ui-pagination';
 
 import * as appActions from '../../redux/actions/appActions';
 import * as playerListActions from '../../redux/actions/playerListActions';
 import * as playerDetailsActions from '../../redux/actions/playerDetailsActions';
+import LoadingSpinner from '../loadingSpinner/LoadingSpinner';
 import appPages from '../../enums/appPages';
-import style from './playerListStyle.js';
 
 class PlayerList extends Component {
     componentDidMount() {
-        this.props.playerListActions.discoverPlayers();
+        if (this.props.allPlayers.length === 0) {
+            this.props.playerListActions.discoverPlayers();
+        }
     }
 
     handlePageChange = (pageNumber) => {
@@ -33,10 +33,10 @@ class PlayerList extends Component {
         const previousRows = (this.props.currentPageNumber - 1) * this.props.numberOfPlayersPerPage // rows on previous pages
         const playerIndex = previousRows + selectedRowNumber;
         const player = this.props.allPlayers[playerIndex];
-        this.openDialog(player);
+        this.openDetailsPage(player);
     }
 
-    openDialog = (player) => {
+    openDetailsPage = (player) => {
         this.props.playerDetailsActions.setPlayerDetailsPlayer(player);
         
         if (!player.notes) {
@@ -47,13 +47,10 @@ class PlayerList extends Component {
         this.props.appActions.setCurrentAppPage(appPages.playerDetails);
     }
 
-    render() {
+    getPageContent = () => {
         if (this.props.discoveringPlayers) {
             return (
-                <div style={style.loading}>
-                    <div style={style.loadingMessage}>Getting the latest player rankings</div>
-                    <CircularProgress size={80} thickness={5} />
-                </div>
+                <LoadingSpinner loadingMessage={'Getting the latest player rankings'}/>
             )
         } else {
             return (
@@ -92,6 +89,15 @@ class PlayerList extends Component {
                 </div>
             )
         }
+    }
+
+    render() {
+        return (
+            <div>
+                <AppBar title={'Players'}/>
+                {this.getPageContent()}
+            </div>
+        )
     }
 }
 

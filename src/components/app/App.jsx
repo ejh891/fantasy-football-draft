@@ -22,10 +22,12 @@ class App extends Component {
             case appPages.playerDetails:
                 return (<PlayerDetails/>);
             default:
-                return (<div>Bad job</div>)
+                return (<div>Bad job</div>);
         }
     }
+
     render() {
+        // MuiThemProvider may only have one child element
         return (
             <MuiThemeProvider>
                 {this.getPage()}

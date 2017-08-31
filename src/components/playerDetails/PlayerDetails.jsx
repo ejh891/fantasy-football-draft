@@ -3,16 +3,26 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import axios from 'axios';
 
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
+import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
 
+import * as appActions from '../../redux/actions/appActions';
 import * as playerDetailsActions from '../../redux/actions/playerDetailsActions';
+import LoadingSpinner from '../loadingSpinner/LoadingSpinner';
 import dateUtil from '../../utils/dateUtil';
+import appPages from '../../enums/appPages';
 
 class PlayerDetails extends Component {
-    getJsx = () => {
+    goBack = () => {
+        this.props.appActions.setCurrentAppPage(appPages.playerList);
+    }
+
+    getPageContent = () => {
+        if (!this.props.playerDetailsPlayer) { return null; }
+        
         if (this.props.playerDetailsLoading) {
-            return (<div>Loading</div>);
+            return (<LoadingSpinner loadingMessage={'Getting the latest news'}/>);
         }
 
         if (this.props.playerDetailsPlayer.notes.length === 0) {
@@ -23,7 +33,6 @@ class PlayerDetails extends Component {
             const player = this.props.playerDetailsPlayer;
             return (
                 <div>
-                    <h1>{player.fullName}</h1>
                     <h3>{player.position + ' - ' + player.teamAbbr}</h3>
                     <div>{'Overall rank: ' + player.overallRank}</div>
                     <div>{player.position + ' rank: ' + player.positionalRank}</div>
@@ -45,9 +54,22 @@ class PlayerDetails extends Component {
     }
 
     render() {
-        if (!this.props.playerDetailsPlayer) { return null; }
-
-        return this.getJsx();
+        return (
+            <div>
+                <AppBar 
+                    title={this.props.playerDetailsPlayer ? this.props.playerDetailsPlayer.fullName : 'Player'}
+                    iconElementLeft={
+                        <IconButton
+                            onTouchTap={this.goBack}
+                        >
+                            <NavigationChevronLeft />
+                        </IconButton>
+                    }
+                />
+                {this.getPageContent()}
+            </div>
+  
+        )
     }
 }
 
@@ -60,7 +82,8 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        playerDetailsActions: bindActionCreators(playerDetailsActions, dispatch)
+        appActions: bindActionCreators(appActions, dispatch),
+        playerDetailsActions: bindActionCreators(playerDetailsActions, dispatch),
     }
 };
 
