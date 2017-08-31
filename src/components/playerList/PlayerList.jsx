@@ -9,11 +9,11 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import Pagination from 'material-ui-pagination';
 
-import PlayerDetailsPop from './PlayerDetailsPop';
+import * as appActions from '../../redux/actions/appActions';
 import * as playerListActions from '../../redux/actions/playerListActions';
-import * as playerDetailsPopActions from '../../redux/actions/playerDetailsPopActions';
+import * as playerDetailsActions from '../../redux/actions/playerDetailsActions';
+import appPages from '../../enums/appPages';
 import style from './playerListStyle.js';
-import dateUtil from '../../utils/dateUtil';
 
 class PlayerList extends Component {
     componentDidMount() {
@@ -28,15 +28,23 @@ class PlayerList extends Component {
         this.props.playerListActions.setPlayersOnThisPage(this.props.allPlayers.slice(pageStartIndex, pageEndIndex))
     }
 
+    onRowSelection = (selectedRowNumbers) => {
+        let selectedRowNumber = selectedRowNumbers[0]; // row on this page
+        const previousRows = (this.props.currentPageNumber - 1) * this.props.numberOfPlayersPerPage // rows on previous pages
+        const playerIndex = previousRows + selectedRowNumber;
+        const player = this.props.allPlayers[playerIndex];
+        this.openDialog(player);
+    }
+
     openDialog = (player) => {
-        this.props.playerDetailsPopActions.setPlayerDetailsPopPlayer(player);
+        this.props.playerDetailsActions.setPlayerDetailsPlayer(player);
         
         if (!player.notes) {
-            this.props.playerDetailsPopActions.setPlayerDetailsPopLoading(true);
+            this.props.playerDetailsActions.setPlayerDetailsLoading(true);
             this.props.playerListActions.discoverPlayerDetails(player.id);
         }
 
-        this.props.playerDetailsPopActions.setPlayerDetailsPopOpen(true);
+        this.props.appActions.setCurrentAppPage(appPages.playerDetails);
     }
 
     render() {
@@ -50,12 +58,12 @@ class PlayerList extends Component {
         } else {
             return (
                 <div>
-                    <PlayerDetailsPop />
-                    <Table>
+                    <Table 
+                        style={{tableLayout: 'auto'}}
+                        onRowSelection={this.onRowSelection}
+                    >
                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                             <TableRow>
-                                <TableHeaderColumn>Overall Rank</TableHeaderColumn>
-                                <TableHeaderColumn>Positional Rank</TableHeaderColumn>
                                 <TableHeaderColumn>Player Name</TableHeaderColumn>
                                 <TableHeaderColumn>Position</TableHeaderColumn>
                                 <TableHeaderColumn>Team</TableHeaderColumn>
@@ -66,13 +74,7 @@ class PlayerList extends Component {
                                 this.props.playersOnThisPage.map((player) => { 
                                     return (
                                         <TableRow key={player.id}>
-                                            <TableRowColumn>{player.overallRank}</TableRowColumn>
-                                            <TableRowColumn>{player.positionalRank}</TableRowColumn>
-                                            <TableRowColumn>
-                                                <a style={style.playerName} onClick={() => {this.openDialog(player)}}>
-                                                    {player.fullName}
-                                                </a>
-                                            </TableRowColumn>
+                                            <TableRowColumn>{player.fullName}</TableRowColumn>
                                             <TableRowColumn>{player.position}</TableRowColumn>
                                             <TableRowColumn>{player.teamAbbr}</TableRowColumn>
                                         </TableRow>
@@ -106,8 +108,9 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        appActions: bindActionCreators(appActions, dispatch),
         playerListActions: bindActionCreators(playerListActions, dispatch),
-        playerDetailsPopActions: bindActionCreators(playerDetailsPopActions, dispatch),
+        playerDetailsActions: bindActionCreators(playerDetailsActions, dispatch),
     }
 };
 

@@ -2,7 +2,7 @@ import * as actionTypes from './actionTypes';
 import axios from 'axios';
 
 import Player from '../../entities/Player';
-import * as playerDetailsPopActions from './playerDetailsPopActions';
+import * as playerDetailsActions from './playerDetailsActions';
 
 // bool to determine whether or not we are currently discovering players
 export function setDiscoveringPlayers(discoveringPlayers) {
@@ -42,7 +42,7 @@ export function addChunkOfPlayers(players) {
 }
 
 
-// sets the player details for the current player focused by the pop
+// sets the player details for the given player
 export function setPlayerDetails(playerId, playerDetails) {
     return {
         type: actionTypes.SET_PLAYER_DETAILS,
@@ -109,8 +109,6 @@ export function discoverPlayers(offset) {
 
 export function discoverPlayerDetails(playerId) {
     return (dispatch, getState) => {
-        const { playerDetailsPop } = getState();
-
         // http://api.fantasy.nfl.com/v1/docs/service?serviceName=playersDetails
         axios.get('http://api.fantasy.nfl.com/v1/players/details', {
             params: {
@@ -120,7 +118,7 @@ export function discoverPlayerDetails(playerId) {
             .then((res) => {
                 console.log(res);
                 dispatch(setPlayerDetails(playerId, res.data.players[0]));
-                dispatch(playerDetailsPopActions.setPlayerDetailsPopLoading(false));
+                dispatch(playerDetailsActions.setPlayerDetailsLoading(false));
             });
     }
 }
