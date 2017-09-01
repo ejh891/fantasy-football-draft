@@ -5,7 +5,7 @@ const defaultState = {
     filteredPlayers: [],
     discoveringPlayers: false,
     currentPageNumber: 1,
-    numberOfPlayersPerPage: 20,
+    numberOfPlayersPerPage: 10,
 }
 
 export default (state = defaultState, action) => {
