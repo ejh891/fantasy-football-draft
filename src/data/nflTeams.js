@@ -1,6 +1,6 @@
 const nflTeams = {
     ARI: {
-        colors: ['#9B2743', '#9B2743']
+        colors: ['#9B2743', '#FFCD00']
     },
     ATL: {
         colors: ['#A6192E', '#101820', '#8C8B89']
@@ -90,7 +90,7 @@ const nflTeams = {
         colors: ['#C8102E', '#8C9093', '#3D3935']
     },
     TEN: {
-        colors: ['#0C2340', '#4B92DB', '#A5ACAF;']
+        colors: ['#0C2340', '#4B92DB', '#A5ACAF']
     },
     WAS: {
         colors: ['#862633', '#FFCD00', '#FFFFFF']

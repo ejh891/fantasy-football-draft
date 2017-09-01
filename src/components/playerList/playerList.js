@@ -72,7 +72,7 @@ class PlayerList extends Component {
                         onRowSelection={this.onRowSelection}
                     >
                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-                            <TableRow>
+                            <TableRow style={{color: 'white'}}>
                                 <TableHeaderColumn>Rank</TableHeaderColumn>
                                 <TableHeaderColumn>Player Name</TableHeaderColumn>
                                 <TableHeaderColumn>Position</TableHeaderColumn>
@@ -83,14 +83,19 @@ class PlayerList extends Component {
                             {
                                 this.getPlayersOnThisPage().map((player) => {
                                     const team = nflTeams[player.teamAbbr];
-                                    const rgb1 = colorUtil.hexToRgb(team.colors[0]);
-                                    const rgb2 = colorUtil.hexToRgb(team.colors[1]);
 
-                                    const rgba1 = `rgba(${rgb1.r},${rgb1.g},${rgb1.b},0.5)`;
-                                    const rgba2 = `rgba(${rgb2.r},${rgb2.g},${rgb2.b},0.5)`;
+                                    let gradientColorStops = [];
+                                    const colorStopPercentage = (100 / team.colors.length).toFixed(0);
+                                    for (let i=0; i<team.colors.length; ++i) {
+                                        const rgb = colorUtil.hexToRgb(team.colors[i]);
+                                        gradientColorStops.push(`rgba(${rgb.r},${rgb.g},${rgb.b},0.3) ${i*colorStopPercentage}%`);
+                                        gradientColorStops.push(`rgba(${rgb.r},${rgb.g},${rgb.b},0.3) ${(i+1)*colorStopPercentage}%`);
+                                    }
+
+                                    gradientColorStops = gradientColorStops.slice(1, gradientColorStops.length - 1);
 
                                     const rowStyle = {
-                                        backgroundImage: `linear-gradient(to right, ${rgba1}, ${rgba2})`
+                                        backgroundImage: `linear-gradient(30deg, ${gradientColorStops.join(',')})`
                                     }; 
 
                                     return (
