@@ -88,8 +88,8 @@ class PlayerList extends Component {
                                     const colorStopPercentage = (100 / team.colors.length).toFixed(0);
                                     for (let i=0; i<team.colors.length; ++i) {
                                         const rgb = colorUtil.hexToRgb(team.colors[i]);
-                                        gradientColorStops.push(`rgba(${rgb.r},${rgb.g},${rgb.b},0.3) ${i*colorStopPercentage}%`);
-                                        gradientColorStops.push(`rgba(${rgb.r},${rgb.g},${rgb.b},0.3) ${(i+1)*colorStopPercentage}%`);
+                                        gradientColorStops.push(`rgba(${rgb.r},${rgb.g},${rgb.b},0.10) ${i*colorStopPercentage}%`);
+                                        gradientColorStops.push(`rgba(${rgb.r},${rgb.g},${rgb.b},0.10) ${(i+1)*colorStopPercentage}%`);
                                     }
 
                                     gradientColorStops = gradientColorStops.slice(1, gradientColorStops.length - 1);
