@@ -90,7 +90,8 @@ export function discoverPlayers(offset) {
                             position: playerData.position,
                             teamAbbr: playerData.teamAbbr,
                             overallRank: playerData.rank,
-                            positionalRank: positionCounter[playerData.position]
+                            positionalRank: positionCounter[playerData.position],
+                            portraitSrc: `http://s.nflcdn.com/static/content/public/static/img/fantasy/transparent/200x200/${playerData.esbid}.png`,
                         });
                     });
 

@@ -15,7 +15,6 @@ import * as filterDrawerActions from '../../redux/actions/filterDrawerActions';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 import FilterDrawer from './filterDrawer';
 import appPages from '../../enums/appPages';
-import nflTeams from '../../data/nflTeams';
 import colorUtil from '../../utils/colorUtil';
 
 class PlayerList extends Component {
@@ -100,8 +99,7 @@ class PlayerList extends Component {
                         <TableBody displayRowCheckbox={false}>
                             {
                                 this.getPlayersOnThisPage().map((player) => {
-                                    const team = nflTeams[player.teamAbbr];
-                                    const teamColorsStyle = this.getTeamColorsStyle(team);
+                                    const teamColorsStyle = this.getTeamColorsStyle(player.team);
                                     return (
                                         <TableRow key={player.id}>
                                             <TableRowColumn>{player.overallRank}</TableRowColumn>

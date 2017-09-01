@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import ImageLoader from 'react-imageloader';
 
 import AppBar from 'material-ui/AppBar';
+import CircularProgress from 'material-ui/CircularProgress';
 import IconButton from 'material-ui/IconButton';
 import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
 
@@ -11,10 +13,15 @@ import * as playerDetailsActions from '../../redux/actions/playerDetailsActions'
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 import dateUtil from '../../utils/dateUtil';
 import appPages from '../../enums/appPages';
+import style from './style';
 
 class PlayerDetails extends Component {
     goBack = () => {
         this.props.appActions.setCurrentAppPage(appPages.playerList);
+    }
+
+    getImageLoadingSpinner = () => {
+        return (<CircularProgress size={80} thickness={5} />);
     }
 
     getPageContent = () => {
@@ -32,9 +39,22 @@ class PlayerDetails extends Component {
             const player = this.props.playerDetailsPlayer;
             return (
                 <div>
-                    <h3>{player.position + ' - ' + player.teamAbbr}</h3>
-                    <div>{'Overall rank: ' + player.overallRank}</div>
-                    <div>{player.position + ' rank: ' + player.positionalRank}</div>
+                    <div style={style.marquee}>
+                        <div style={{...style.portraitWrapper, backgroundImage: `url(${player.team.logoSrc})`}}>
+                            <ImageLoader
+                                src={player.portraitSrc}
+                                alt={player.fullName}
+                                preloader={this.getImageLoadingSpinner}
+                            >
+                            </ImageLoader>
+                        </div>
+                        <div style={style.details}>
+                            <h3>{`${player.position} - ${player.teamAbbr}`}</h3>
+                            <h3>{`Bye: ${player.team.bye}`}</h3>
+                            <div>{`Overall rank: ${player.overallRank}`}</div>
+                            <div>{`${player.position} rank: ${player.positionalRank}`}</div>
+                        </div>
+                    </div>
                     {this.props.playerDetailsPlayer.notes.map((note) => {
                         const dateData = dateUtil.parseTimestamp(note.timestamp);
                         return (
