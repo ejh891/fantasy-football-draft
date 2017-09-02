@@ -1,7 +1,7 @@
 const nflTeams = {
     UNK: { // unknown?
         bye: '?',
-        colors: []
+        colors: ['#000000']
     },
     ARI: {
         bye: 8,

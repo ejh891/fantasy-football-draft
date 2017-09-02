@@ -93,7 +93,7 @@ class PlayerList extends Component {
                                 <TableHeaderColumn>Rank</TableHeaderColumn>
                                 <TableHeaderColumn>Player Name</TableHeaderColumn>
                                 <TableHeaderColumn>Position</TableHeaderColumn>
-                                <TableHeaderColumn>Team</TableHeaderColumn>
+                                <TableHeaderColumn>Bye</TableHeaderColumn>
                             </TableRow>
                         </TableHeader>
                         <TableBody displayRowCheckbox={false}>
@@ -105,7 +105,7 @@ class PlayerList extends Component {
                                             <TableRowColumn>{player.overallRank}</TableRowColumn>
                                             <TableRowColumn>{player.fullName}</TableRowColumn>
                                             <TableRowColumn>{player.position}</TableRowColumn>
-                                            <TableRowColumn style={teamColorsStyle}>{player.teamAbbr}</TableRowColumn>
+                                            <TableRowColumn>{player.team.bye}</TableRowColumn>
                                         </TableRow>
                                     );
                                 })

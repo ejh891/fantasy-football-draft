@@ -11,6 +11,17 @@ const style = {
     details: {
         flex: '1 0 auto',
         padding: '10px',
+    },
+    actionBar: {
+        display: 'flex',
+        marginTop: '10px',
+        marginBottom: '10px',
+        justifyContent: 'space-evenly'
+    },
+    floatingActionButton: {
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
     }
 }
 

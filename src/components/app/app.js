@@ -5,6 +5,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
  
 import './app.css';
+import { database } from '../../config/firebase';
 import * as appActions from '../../redux/actions/appActions';
 import * as ownerActions from '../../redux/actions/ownerActions';
 import appPages from '../../enums/appPages';
@@ -18,9 +19,9 @@ injectTapEventPlugin();
 
 class App extends Component {
     componentDidMount() {
-        let ownerDataRef = window.firebase.database().ref('ownerData/');
+        let ownerDataRef = database().ref('ownerData/');
         ownerDataRef.on('value', this.updateOwnerDataFromServer);
-        this.props.ownerActions.writeOwnerData({owners});
+        // this.props.ownerActions.writeOwnerData({owners}); // seed firebase with data
     }
 
     updateOwnerDataFromServer = (snapshot) => {

@@ -1,4 +1,5 @@
 import * as actionTypes from './actionTypes';
+import { database } from '../../config/firebase';
 
 export function readOwnerData(ownerData) {
     return {
@@ -13,7 +14,8 @@ export function addPlayerToRoster(ownerId, player) {
         const ownerData = owner.ownerData;
         let newOwnerData = JSON.parse(JSON.stringify(ownerData));
 
-        const ownerToBeUpdated = newOwnerData.filter((owner) => { return owner.id === ownerId});
+        const ownerToBeUpdated = newOwnerData.owners.filter((owner) => { return owner.id === ownerId})[0];
+        if (!ownerToBeUpdated.players) { ownerToBeUpdated.players = []; }
         ownerToBeUpdated.players.push(player.id);
 
         newOwnerData.owners = [
@@ -31,7 +33,8 @@ export function removePlayerFromRoster(ownerId, player) {
         const ownerData = owner.ownerData;
         let newOwnerData = JSON.parse(JSON.stringify(ownerData));
 
-        const ownerToBeUpdated = newOwnerData.filter((owner) => { return owner.id === ownerId});
+        const ownerToBeUpdated = newOwnerData.owners.filter((owner) => { return owner.id === ownerId})[0];
+        if (!ownerToBeUpdated.players) { ownerToBeUpdated.players = []; }
         ownerToBeUpdated.players = ownerToBeUpdated.players.filter((playerId) => { return playerId !== player.id});
 
         newOwnerData.owners = [
@@ -45,6 +48,6 @@ export function removePlayerFromRoster(ownerId, player) {
 
 export function writeOwnerData(ownerData) {
     return (dispatch, getState) => {
-        window.firebase.database().ref('ownerData').set(ownerData);
+        database().ref('ownerData').set(ownerData);
     }
 }
