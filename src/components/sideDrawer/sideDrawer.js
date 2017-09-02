@@ -48,10 +48,6 @@ class SideDrawer extends Component {
                 docked={false}
                 width={200}
                 open={this.props.filterDrawerOpen}
-                onRequestChange={(open) => {
-                    console.log(open);
-                    this.props.filterDrawerActions.setFilterDrawerOpen(open);
-                }}
             >
             <div style={style.userInfo}>
                 <Avatar

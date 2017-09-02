@@ -12,7 +12,6 @@ import appPages from '../../enums/appPages';
 import LogIn from '../logIn/logIn';
 import PlayerList from '../playerList/playerList';
 import PlayerDetails from '../playerDetails/playerDetails';
-import owners from '../../data/owners';
 
 class App extends Component {
     isUserRegisteredAsOwner = (user) => {

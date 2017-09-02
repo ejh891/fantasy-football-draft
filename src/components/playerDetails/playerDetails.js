@@ -104,7 +104,6 @@ class PlayerDetails extends Component {
                 <div>No recent news</div>
             )
         } else {
-            const player = this.props.playerDetailsPlayer;
             return (
                 <div>
                     {this.props.playerDetailsPlayer.notes.map((note) => {

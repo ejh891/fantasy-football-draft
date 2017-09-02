@@ -15,7 +15,6 @@ import * as filterDrawerActions from '../../redux/actions/filterDrawerActions';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 import SideDrawer from '../sideDrawer/sideDrawer';
 import appPages from '../../enums/appPages';
-import colorUtil from '../../utils/colorUtil';
 
 class PlayerList extends Component {
     componentDidMount() {

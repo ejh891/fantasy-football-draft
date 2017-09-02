@@ -7,7 +7,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import * as authActions from '../../redux/actions/authActions';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 import { firebaseAuth, firebaseFacebookAuthProvider } from '../../config/firebase';
-import style from './style.js';
 
 class LogIn extends Component {
     signIn = () => {
