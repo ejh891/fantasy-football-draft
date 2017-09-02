@@ -72,7 +72,7 @@ class PlayerList extends Component {
         gradientColorStops = gradientColorStops.slice(1, gradientColorStops.length - 1);
 
         return {
-            backgroundImage: `linear-gradient(30deg, ${gradientColorStops.join(',')})`
+            backgroundImage: `linear-gradient(-30deg, ${gradientColorStops.join(',')})`
         }; 
     }
 
