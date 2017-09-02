@@ -132,7 +132,7 @@ class PlayerDetails extends Component {
             return (<LoadingSpinner loadingMessage={'Getting the latest news'}/>);
         } else {
             const player = this.props.playerDetailsPlayer;
-            
+            const statusBubbleColor = player.status === 'ACT' ? '#00ff00' : '#ff0000';
             return (
                 <div>
                     <div style={style.marquee}>
@@ -146,6 +146,18 @@ class PlayerDetails extends Component {
                         <div style={style.details}>
                             <h3>{`${player.position} - ${player.teamAbbr}`}</h3>
                             <h3>{`Bye: ${player.team.bye}`}</h3>
+                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                <div
+                                    style={{
+                                        width: '10px',
+                                        height: '10px',
+                                        borderRadius: '50%',
+                                        backgroundColor: statusBubbleColor,
+                                        marginRight: '10px'
+                                        }}>
+                                </div>
+                                <div>{player.status}</div>
+                            </div>
                             <div>{`Overall rank: ${player.overallRank}`}</div>
                             <div>{`${player.position} rank: ${player.positionalRank}`}</div>
                         </div>
