@@ -118,7 +118,8 @@ export function discoverPlayerDetails(playerId) {
         })
             .then((res) => {
                 const propsToAddToPlayer = {
-                    notes: res.data.players[0].notes
+                    notes: res.data.players[0].notes,
+                    status: res.data.players[0].status,
                 }
                 dispatch(setPlayerProps(playerId, propsToAddToPlayer));
                 dispatch(playerDetailsActions.setPlayerDetailsLoading(false));

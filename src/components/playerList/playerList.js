@@ -23,14 +23,26 @@ class PlayerList extends Component {
         }
     }
 
-    getPlayersOnThisPage = () => {
-        const pageStartIndex = this.props.numberOfPlayersPerPage * (this.props.currentPageNumber - 1);
+    discoverPlayerDetailsForPage = (pageNumber) => {
+        for (const player of this.getPlayersOnPage(pageNumber)) {
+            if (!player.status) {
+                this.props.playerListActions.discoverPlayerDetails(player.id);
+            }
+        }
+    }
+
+    getPlayersOnPage = (pageNumber=this.props.currentPageNumber) => {
+        const pageStartIndex = this.props.numberOfPlayersPerPage * (pageNumber - 1);
         const pageEndIndex = pageStartIndex + this.props.numberOfPlayersPerPage;
         
-        return this.props.filteredPlayers.slice(pageStartIndex, pageEndIndex);
+        const playersOnThisPage = this.props.filteredPlayers.slice(pageStartIndex, pageEndIndex);
+
+        return playersOnThisPage;
     }
 
     handlePageChange = (pageNumber) => {
+        this.discoverPlayerDetailsForPage(pageNumber);
+
         this.props.playerListActions.setCurrentPageNumber(pageNumber);
     }
 
@@ -79,11 +91,25 @@ class PlayerList extends Component {
                         </TableHeader>
                         <TableBody displayRowCheckbox={false}>
                             {
-                                this.getPlayersOnThisPage().map((player) => {
+                                this.getPlayersOnPage().map((player) => {
+                                    const statusBubbleColor = player.status === 'ACT' ? '#00ff00' : '#ff0000';
                                     return (
                                         <TableRow key={player.id}>
                                             <TableRowColumn>{player.overallRank}</TableRowColumn>
-                                            <TableRowColumn>{player.fullName}</TableRowColumn>
+                                            <TableRowColumn>
+                                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                                <div
+                                                    style={{
+                                                        width: '10px',
+                                                        height: '10px',
+                                                        borderRadius: '50%',
+                                                        backgroundColor: statusBubbleColor,
+                                                        marginRight: '10px'
+                                                        }}>
+                                                </div>
+                                                <div>{player.fullName}</div>
+                                                </div>
+                                               </TableRowColumn>
                                             <TableRowColumn>{player.position}</TableRowColumn>
                                             <TableRowColumn>{player.team.bye}</TableRowColumn>
                                         </TableRow>
@@ -95,12 +121,11 @@ class PlayerList extends Component {
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                     <Pagination
                         current={this.props.currentPageNumber}
-                        total={Math.ceil(this.props.allPlayers.length / this.props.numberOfPlayersPerPage)}
+                        total={Math.ceil(this.props.filteredPlayers.length / this.props.numberOfPlayersPerPage)}
                         display={5} // show this many page numbers between the < and > arrows
                         onChange={this.handlePageChange}
                     />
                     </div>
-
                 </div>
             )
         }
