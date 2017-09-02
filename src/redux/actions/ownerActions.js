@@ -8,6 +8,13 @@ export function readOwnerData(ownerData) {
     }
 }
 
+export function setReceivedInitialOwnerData(receivedInitialOwnerData) {
+    return {
+        type: actionTypes.SET_RECEIVED_INITIAL_OWNED_DATA,
+        receivedInitialOwnerData
+    }
+}
+
 export function registerNewOwner(user) {
     return (dispatch, getState) => {
         const { owner } = getState();

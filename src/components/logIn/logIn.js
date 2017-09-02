@@ -17,7 +17,7 @@ class LogIn extends Component {
     
     getPageContent = () => {
         if (this.props.userLoggingIn) {
-            return (<LoadingSpinner loadingMessge={"Logging you in!"}/>)
+            return (<LoadingSpinner loadingMessage={"Logging you in!"}/>)
         } else {
             return (
                 <div style={{padding: '10px'}}>

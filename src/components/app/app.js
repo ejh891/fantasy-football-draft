@@ -15,12 +15,12 @@ import PlayerDetails from '../playerDetails/playerDetails';
 import owners from '../../data/owners';
 
 class App extends Component {
-    isUserRegistedAsOwner = (user) => {
+    isUserRegisteredAsOwner = (user) => {
         if (!this.props.ownerData.owners) { 
             return false; 
         }
 
-        const matchingOwners = this.props.ownerData.owners.filter((owner) => { return owner.user.uid = user.uid });
+        const matchingOwners = this.props.ownerData.owners.filter((owner) => { return owner.user.uid === user.uid });
 
         if (matchingOwners.length > 1) { throw new Error('Multiple owners with the same id encountered.'); }
         
@@ -34,39 +34,35 @@ class App extends Component {
     onAuthStateChanged = (user) => {        
         if (user) {
             this.props.authActions.setUser(user);
-            
-            firebaseDatabase().ref('ownerData').once('value').then((snapshot) => { // ensure that we have owner data
-                this.updateOwnerDataFromServer(snapshot);
-
-                if (!this.isUserRegistedAsOwner(user)) {
-                    this.registerUserAsOwner(user);
-                }
-
-                this.props.authActions.setUserLoggingIn(false);
-                this.props.appActions.setCurrentAppPage(appPages.playerList);
-            });
-
         } else {
             this.props.authActions.setUser(null);
         }
     }
 
     componentWillMount() {
-        if(!firebaseAuth().currentUser) {
-            this.props.appActions.setCurrentAppPage(appPages.logIn);
-        } else {
-            this.props.appActions.setCurrentAppPage(appPages.playerList);
-        }
-
+        // listen to changes to the data
         let ownerDataRef = firebaseDatabase().ref('ownerData/');
         ownerDataRef.on('value', this.updateOwnerDataFromServer);
-        // this.props.ownerActions.writeOwnerData({owners}); // seed firebase with data
 
+        // listen to auth state changes
         firebaseAuth().onAuthStateChanged(this.onAuthStateChanged);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        // show either the sign-up page or playerList depending on sign-in and registration status
+        if(!nextProps.userLoggingIn && nextProps.user && nextProps.receivedInitialOwnerData) {
+            if (!this.isUserRegisteredAsOwner(nextProps.user)) {
+                this.registerUserAsOwner(nextProps.user);
+            }
+            nextProps.appActions.setCurrentAppPage(appPages.playerList);
+        } else {
+            nextProps.appActions.setCurrentAppPage(appPages.logIn);
+        }
     }
 
     updateOwnerDataFromServer = (snapshot) => {
         this.props.ownerActions.readOwnerData(snapshot.val());
+        this.props.ownerActions.setReceivedInitialOwnerData(true);
     }
 
     getPage = () => {
@@ -96,6 +92,9 @@ const mapStateToProps = (state, props) => {
 	return {
         currentPage: state.app.appPageId,
         ownerData: state.owner.ownerData,
+        userLoggingIn: state.auth.userLoggingIn,
+        user: state.auth.user,
+        receivedInitialOwnerData: state.owner.receivedInitialOwnerData,
 	};
 };
 
