@@ -99,6 +99,11 @@ export function discoverPlayers(offset) {
                     dispatch(discoverPlayers(offset + count, count))    
                 } else {
                     dispatch(setFilteredPlayers(playerList.allPlayers));
+                    for (const player of playerList.allPlayers) {
+                        if (!player.status) {
+                            dispatch(discoverPlayerDetails(player.id));
+                        }
+                    }
                     dispatch(setDiscoveringPlayers(false));
                 }
             })

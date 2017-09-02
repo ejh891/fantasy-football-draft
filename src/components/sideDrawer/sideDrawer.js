@@ -41,7 +41,7 @@ class SideDrawer extends Component {
     }
 
     render() {
-        if (!firebaseAuth().currentUser) { return null; }
+        if (!this.props.user) { return null; }
 
         return (
             <Drawer
@@ -52,10 +52,12 @@ class SideDrawer extends Component {
             <div style={style.userInfo}>
                 <Avatar
                     src={this.props.user.photoURL}
+                    style={style.avatar}
                 />
                 <div>{this.props.user.displayName}</div>
-                <FlatButton onClick={this.signOut}>Sign Out</FlatButton>
             </div>
+            <FlatButton onClick={this.signOut}>Sign Out</FlatButton>
+            
             <h3 style={{marginLeft: '10px'}}>Show</h3>
             <MenuItem onClick={() => {this.filterPlayersByPosition('ALL');}}>All</MenuItem>
             <MenuItem onClick={() => {this.filterPlayersByPosition('QB');}}>QBs</MenuItem>

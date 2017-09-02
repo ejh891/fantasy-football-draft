@@ -23,14 +23,6 @@ class PlayerList extends Component {
         }
     }
 
-    discoverPlayerDetailsForPage = (pageNumber) => {
-        for (const player of this.getPlayersOnPage(pageNumber)) {
-            if (!player.status) {
-                this.props.playerListActions.discoverPlayerDetails(player.id);
-            }
-        }
-    }
-
     getPlayersOnPage = (pageNumber=this.props.currentPageNumber) => {
         const pageStartIndex = this.props.numberOfPlayersPerPage * (pageNumber - 1);
         const pageEndIndex = pageStartIndex + this.props.numberOfPlayersPerPage;
@@ -41,8 +33,6 @@ class PlayerList extends Component {
     }
 
     handlePageChange = (pageNumber) => {
-        this.discoverPlayerDetailsForPage(pageNumber);
-
         this.props.playerListActions.setCurrentPageNumber(pageNumber);
     }
 
@@ -92,7 +82,7 @@ class PlayerList extends Component {
                         <TableBody displayRowCheckbox={false}>
                             {
                                 this.getPlayersOnPage().map((player) => {
-                                    const statusBubbleColor = player.status === 'ACT' ? '#00ff00' : '#ff0000';
+                                    const statusBubbleColor = player.status === 'ACT' ? '#4CAF50' : '#F44336';
                                     return (
                                         <TableRow key={player.id}>
                                             <TableRowColumn>{player.overallRank}</TableRowColumn>

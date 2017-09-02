@@ -1,6 +1,11 @@
 const style = {
     userInfo: {
-        padding: '10px'
+        padding: '10px',
+        display: 'flex',
+        alignItems: 'center',
+    },
+    avatar: {
+        marginRight: '10px'
     }
 }
 

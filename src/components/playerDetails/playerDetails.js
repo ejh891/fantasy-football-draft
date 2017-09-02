@@ -101,12 +101,12 @@ class PlayerDetails extends Component {
     getNews = () => {
         if (this.props.playerDetailsPlayer.notes.length === 0) {
             return (
-                <div>No recent news</div>
+                <h2 style={{}}>No recent news</h2>
             )
         } else {
             return (
                 <div>
-                    <div>Recent News</div>
+                    <h2>Recent News</h2>
                     {this.props.playerDetailsPlayer.notes.map((note) => {
                         const dateData = dateUtil.parseTimestamp(note.timestamp);
                         return (
@@ -132,7 +132,7 @@ class PlayerDetails extends Component {
             return (<LoadingSpinner loadingMessage={'Getting the latest news'}/>);
         } else {
             const player = this.props.playerDetailsPlayer;
-            const statusBubbleColor = player.status === 'ACT' ? '#00ff00' : '#ff0000';
+            const statusBubbleColor = player.status === 'ACT' ? '#4CAF50' : '#F44336';
             return (
                 <div>
                     <div style={style.marquee}>
