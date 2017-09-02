@@ -1,8 +1,6 @@
 import * as actionTypes from './actionTypes';
 
 export function readOwnerData(ownerData) {
-    console.log('got owner data');
-    console.log(ownerData);
     return {
         type: actionTypes.READ_OWNER_DATA,
         ownerData
