@@ -53,7 +53,7 @@ class App extends Component {
     }
 
     getPage = () => {
-        // show either the sign-up page or playerList depending on sign-in and registration status
+        // show the sign in page depending on sign-in and registration status
         if(!this.userLoggingIn && this.props.user && this.props.receivedInitialOwnerData) {
             if (!this.isUserRegisteredAsOwner(this.props.user)) {
                 this.registerUserAsOwner(this.props.user);
