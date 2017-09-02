@@ -6,6 +6,8 @@ const defaultState = {
     discoveringPlayers: false,
     currentPageNumber: 1,
     numberOfPlayersPerPage: 10,
+    filters: ['QB', 'RB', 'WR', 'TE', 'K', 'DEF'],
+    onlyShowAvailable: true,
 }
 
 export default (state = defaultState, action) => {
@@ -43,10 +45,34 @@ export default (state = defaultState, action) => {
                 ...state,
                 allPlayers: modifiedAllPlayersClone
             }
-        case actionTypes.SET_FILTERED_PLAYERS:
+        case actionTypes.ADD_FILTER:
             return {
                 ...state,
-                filteredPlayers: action.filteredPlayers
+                filters: [...state.filters, action.filter],
+            }
+        case actionTypes.REMOVE_FILTER:
+            return {
+                ...state,
+                filters: state.filters.filter((filter) => { return filter !== action.filter; }),
+            }
+        case actionTypes.APPLY_FILTERS:
+            let filteredPlayers = state.allPlayers.filter((player) => {
+                return state.filters.includes(player.position);
+            });
+
+            if (state.onlyShowAvailable) {
+                filteredPlayers = filteredPlayers.filter((player) => {
+                    return !player.getOwner();
+                });
+            }
+            return {
+                ...state,
+                filteredPlayers
+            }
+        case actionTypes.SET_ONLY_SHOW_AVAILABLE:
+            return {
+                ...state,
+                onlyShowAvailable: action.onlyShowAvailable
             }
         default:
             return state;

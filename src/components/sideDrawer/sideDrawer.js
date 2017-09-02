@@ -8,6 +8,8 @@ import Avatar from 'material-ui/Avatar';
 import Drawer from 'material-ui/Drawer';
 import FlatButton from 'material-ui/FlatButton';
 import MenuItem from 'material-ui/MenuItem';
+import Checkbox from 'material-ui/Checkbox';
+import Toggle from 'material-ui/Toggle';
 
 import appPages from '../../enums/appPages';
 import * as appActions from '../../redux/actions/appActions';
@@ -40,13 +42,28 @@ class SideDrawer extends Component {
         this.props.filterDrawerActions.setFilterDrawerOpen(false);
     }
 
+    toggleFilter = (filter) => {
+        if (this.props.filters.includes(filter)) {
+            this.props.playerListActions.removeFilter(filter);
+        } else {
+            this.props.playerListActions.addFilter(filter);
+        }
+
+        this.props.playerListActions.applyFilters();
+    }
+
+    onlyShowAvailableOnToggle = (event, toggled) => {
+        this.props.playerListActions.setOnlyShowAvailable(toggled);
+        this.props.playerListActions.applyFilters();
+    }
+
     render() {
         if (!this.props.user) { return null; }
 
         return (
             <Drawer
                 docked={false}
-                width={200}
+                width={300}
                 open={this.props.filterDrawerOpen}
             >
             <div style={style.userInfo}>
@@ -57,14 +74,52 @@ class SideDrawer extends Component {
                 <div>{this.props.user.displayName}</div>
             </div>
             <FlatButton onClick={this.signOut}>Sign Out</FlatButton>
-            
+            <hr/>
             <h3 style={{marginLeft: '10px'}}>Show</h3>
-            <MenuItem onClick={() => {this.filterPlayersByPosition('ALL');}}>All</MenuItem>
-            <MenuItem onClick={() => {this.filterPlayersByPosition('QB');}}>QBs</MenuItem>
-            <MenuItem onClick={() => {this.filterPlayersByPosition('RB');}}>RBs</MenuItem>
-            <MenuItem onClick={() => {this.filterPlayersByPosition('WR');}}>WRs</MenuItem>
-            <MenuItem onClick={() => {this.filterPlayersByPosition('K');}}>Ks</MenuItem>
-            <MenuItem onClick={() => {this.filterPlayersByPosition('DEF');}}>DEFs</MenuItem>
+            <Checkbox
+                label="QBs"
+                checked={this.props.filters.indexOf('QB') > -1}
+                onCheck={() => { this.toggleFilter('QB'); }}
+                style={style.checkbox}
+            />
+            <Checkbox
+                label="RBs"
+                checked={this.props.filters.indexOf('RB') > -1}
+                onCheck={() => { this.toggleFilter('RB'); }}
+                style={style.checkbox}
+            />
+            <Checkbox
+                label="WRs"
+                checked={this.props.filters.indexOf('WR') > -1}
+                onCheck={() => { this.toggleFilter('WR'); }}
+                style={style.checkbox}
+            />
+            <Checkbox
+                label="TEs"
+                checked={this.props.filters.indexOf('TE') > -1}
+                onCheck={() => { this.toggleFilter('TE'); }}
+                style={style.checkbox}
+            />
+            <Checkbox
+                label="Ks"
+                checked={this.props.filters.indexOf('K') > -1}
+                onCheck={() => { this.toggleFilter('K'); }}
+                style={style.checkbox}
+            />
+            <Checkbox
+                label="DEFs"
+                checked={this.props.filters.indexOf('DEF') > -1}
+                onCheck={() => { this.toggleFilter('DEF'); }}
+                style={style.checkbox}
+            />
+            <Toggle
+                label="Only show available players"
+                labelPosition="right"
+                toggled={this.props.onlyShowAvailable}
+                onToggle={this.onlyShowAvailableOnToggle}
+                style={style.toggle}
+            />
+            <MenuItem style={style.closeButton} onClick={this.closeDrawer}>Close Menu</MenuItem>
         </Drawer>
         )
     }
@@ -75,6 +130,8 @@ const mapStateToProps = (state, props) => {
         allPlayers: state.playerList.allPlayers,
         filterDrawerOpen: state.filterDrawer.isOpen,
         user: state.auth.user,
+        filters: state.playerList.filters,
+        onlyShowAvailable: state.playerList.onlyShowAvailable
 	};
 };
 

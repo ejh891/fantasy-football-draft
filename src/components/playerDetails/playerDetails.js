@@ -30,20 +30,6 @@ class PlayerDetails extends Component {
         return (<CircularProgress size={80} thickness={5} />);
     }
 
-    getOwner = () => {
-        for (const owner of this.props.ownerData.owners) {
-            if (!owner.players) { continue; }
-
-            const matchingPlayers = owner.players.filter((playerId) => {
-                return playerId === this.props.playerDetailsPlayer.id;
-            });
-
-            if (matchingPlayers.length > 0) {
-                return owner;
-            }
-        }
-    }
-
     draftPlayer = () => {
         this.props.ownerActions.addPlayerToRoster(this.props.user.uid, this.props.playerDetailsPlayer);
     }
@@ -70,7 +56,7 @@ class PlayerDetails extends Component {
     }
 
     getActionBar = () => {
-        const playerOwner = this.getOwner();
+        const playerOwner = this.props.playerDetailsPlayer.getOwner();
 
         if (playerOwner) {
             return (

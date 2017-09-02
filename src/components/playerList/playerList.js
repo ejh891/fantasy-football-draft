@@ -59,6 +59,20 @@ class PlayerList extends Component {
         this.props.filterDrawerActions.setFilterDrawerOpen(true);
     }
 
+    getRedBubble = () => {
+        return (
+            <div
+                style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    backgroundColor: '#F44336',
+                    marginLeft: '10px'
+                    }}>
+            </div>
+        )
+    }
+
     getPageContent = () => {
         if (this.props.discoveringPlayers) {
             return (
@@ -82,22 +96,20 @@ class PlayerList extends Component {
                         <TableBody displayRowCheckbox={false}>
                             {
                                 this.getPlayersOnPage().map((player) => {
-                                    const statusBubbleColor = player.status === 'ACT' ? '#4CAF50' : '#F44336';
+                                    const hasRedBubble = player.status !== 'ACT';
                                     return (
                                         <TableRow key={player.id}>
                                             <TableRowColumn>{player.overallRank}</TableRowColumn>
                                             <TableRowColumn>
-                                                <div style={{display: 'flex', alignItems: 'center'}}>
-                                                <div
-                                                    style={{
-                                                        width: '10px',
-                                                        height: '10px',
-                                                        borderRadius: '50%',
-                                                        backgroundColor: statusBubbleColor,
-                                                        marginRight: '10px'
-                                                        }}>
-                                                </div>
-                                                <div>{player.fullName}</div>
+                                                <div style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        maxWidth: '100px',
+                                                        whiteSpace: 'normal'
+                                                    }}
+                                                >
+                                                    <div>{player.fullName}</div>
+                                                    {hasRedBubble ? this.getRedBubble() : null}
                                                 </div>
                                                </TableRowColumn>
                                             <TableRowColumn>{player.position}</TableRowColumn>

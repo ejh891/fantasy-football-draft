@@ -44,10 +44,30 @@ export function setPlayerProps(playerId, props) {
     }
 }
 
-export function setFilteredPlayers(filteredPlayers) {
+export function addFilter(filter) {
     return {
-        type: actionTypes.SET_FILTERED_PLAYERS,
-        filteredPlayers
+        type: actionTypes.ADD_FILTER,
+        filter
+    }
+}
+
+export function removeFilter(filter) {
+    return {
+        type: actionTypes.REMOVE_FILTER,
+        filter
+    }
+}
+
+export function applyFilters() {
+    return {
+        type: actionTypes.APPLY_FILTERS,
+    }
+}
+
+export function setOnlyShowAvailable(onlyShowAvailable) {
+    return {
+        type: actionTypes.SET_ONLY_SHOW_AVAILABLE,
+        onlyShowAvailable
     }
 }
 
@@ -98,7 +118,7 @@ export function discoverPlayers(offset) {
                     dispatch(addChunkOfPlayers(players));
                     dispatch(discoverPlayers(offset + count, count))    
                 } else {
-                    dispatch(setFilteredPlayers(playerList.allPlayers));
+                    dispatch(applyFilters());
                     for (const player of playerList.allPlayers) {
                         if (!player.status) {
                             dispatch(discoverPlayerDetails(player.id));
