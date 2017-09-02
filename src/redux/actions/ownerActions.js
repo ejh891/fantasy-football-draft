@@ -1,5 +1,5 @@
 import * as actionTypes from './actionTypes';
-import { database } from '../../config/firebase';
+import { firebaseDatabase } from '../../config/firebase';
 
 export function readOwnerData(ownerData) {
     return {
@@ -48,6 +48,6 @@ export function removePlayerFromRoster(ownerId, player) {
 
 export function writeOwnerData(ownerData) {
     return (dispatch, getState) => {
-        database().ref('ownerData').set(ownerData);
+        firebaseDatabase().ref('ownerData').set(ownerData);
     }
 }

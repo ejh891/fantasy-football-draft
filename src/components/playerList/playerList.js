@@ -13,7 +13,7 @@ import * as playerListActions from '../../redux/actions/playerListActions';
 import * as playerDetailsActions from '../../redux/actions/playerDetailsActions';
 import * as filterDrawerActions from '../../redux/actions/filterDrawerActions';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
-import FilterDrawer from './filterDrawer';
+import SideDrawer from '../sideDrawer/sideDrawer';
 import appPages from '../../enums/appPages';
 import colorUtil from '../../utils/colorUtil';
 
@@ -54,7 +54,7 @@ class PlayerList extends Component {
         this.props.appActions.setCurrentAppPage(appPages.playerDetails);
     }
 
-    openFilterDrawer = () => {
+    openSideDrawer = () => {
         this.props.filterDrawerActions.setFilterDrawerOpen(true);
     }
 
@@ -124,19 +124,20 @@ class PlayerList extends Component {
     }
 
     render() {
+        if (!this.props.user) { return null; }
         return (
             <div>
                 <AppBar 
                     title={'Players'}
                     iconElementLeft={
                         <IconButton
-                            onTouchTap={this.openFilterDrawer}
+                            onTouchTap={this.openSideDrawer}
                         >
                             <NavigationMenu />
                         </IconButton>
                     }
                 />
-                <FilterDrawer/>
+                <SideDrawer/>
                 {this.getPageContent()}
             </div>
         )
@@ -151,6 +152,7 @@ const mapStateToProps = (state, props) => {
         playersOnThisPage: state.playerList.playersOnThisPage,
         numberOfPlayersPerPage: state.playerList.numberOfPlayersPerPage,
         currentPageNumber: state.playerList.currentPageNumber,
+        user: state.auth.user,
 	};
 };
 
