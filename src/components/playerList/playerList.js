@@ -92,12 +92,15 @@ class PlayerList extends Component {
                             }
                         </TableBody>
                     </Table>
+                    <div style={{display: 'flex', justifyContent: 'center'}}>
                     <Pagination
                         current={this.props.currentPageNumber}
-                        total={this.props.allPlayers.length / this.props.numberOfPlayersPerPage}
+                        total={Math.ceil(this.props.allPlayers.length / this.props.numberOfPlayersPerPage)}
                         display={5} // show this many page numbers between the < and > arrows
                         onChange={this.handlePageChange}
                     />
+                    </div>
+
                 </div>
             )
         }

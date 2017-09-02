@@ -47,33 +47,28 @@ class App extends Component {
         firebaseAuth().onAuthStateChanged(this.onAuthStateChanged);
     }
 
-    componentWillReceiveProps(nextProps) {
-        // show either the sign-up page or playerList depending on sign-in and registration status
-        if(!nextProps.userLoggingIn && nextProps.user && nextProps.receivedInitialOwnerData) {
-            if (!this.isUserRegisteredAsOwner(nextProps.user)) {
-                this.registerUserAsOwner(nextProps.user);
-            }
-            nextProps.appActions.setCurrentAppPage(appPages.playerList);
-        } else {
-            nextProps.appActions.setCurrentAppPage(appPages.logIn);
-        }
-    }
-
     updateOwnerDataFromServer = (snapshot) => {
         this.props.ownerActions.readOwnerData(snapshot.val());
         this.props.ownerActions.setReceivedInitialOwnerData(true);
     }
 
     getPage = () => {
-        switch (this.props.currentPage) {
-            case appPages.logIn:
-                return (<LogIn/>)
-            case appPages.playerList:
-                return (<PlayerList/>);
-            case appPages.playerDetails:
-                return (<PlayerDetails/>);
-            default:
-                return (<div>Bad job</div>);
+        // show either the sign-up page or playerList depending on sign-in and registration status
+        if(!this.userLoggingIn && this.props.user && this.props.receivedInitialOwnerData) {
+            if (!this.isUserRegisteredAsOwner(this.props.user)) {
+                this.registerUserAsOwner(this.props.user);
+            }
+
+            switch (this.props.currentPage) {
+                case appPages.playerList:
+                    return (<PlayerList/>);
+                case appPages.playerDetails:
+                    return (<PlayerDetails/>);
+                default:
+                    return (<div>Bad job</div>);
+            }
+        } else {
+            return (<LogIn/>)
         }
     }
 

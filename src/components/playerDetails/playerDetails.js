@@ -106,6 +106,7 @@ class PlayerDetails extends Component {
         } else {
             return (
                 <div>
+                    <div>Recent News</div>
                     {this.props.playerDetailsPlayer.notes.map((note) => {
                         const dateData = dateUtil.parseTimestamp(note.timestamp);
                         return (

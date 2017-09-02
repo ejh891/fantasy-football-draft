@@ -1,7 +1,6 @@
 const appPages = {
-    logIn: 0,
-    playerList: 1,
-    playerDetails: 2,
+    playerList: 0,
+    playerDetails: 1,
 }
 
 export default appPages;

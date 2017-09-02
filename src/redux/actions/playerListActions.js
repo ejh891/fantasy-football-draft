@@ -80,7 +80,7 @@ export function discoverPlayers(offset) {
             }
         })
             .then((res) => {
-                if (res.data.players.length > 0) { // there might be more players, recursively discover more
+                if (res.data.players.length > 0 && playerList.allPlayers.length <= 250) { // there might be more players, recursively discover more
                     const players = res.data.players.map((playerData) => {
                         positionCounter[playerData.position]++;
                         return new Player({
