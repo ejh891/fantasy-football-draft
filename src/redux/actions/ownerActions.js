@@ -8,18 +8,41 @@ export function readOwnerData(ownerData) {
     }
 }
 
-export function addPlayerToRoster(ownerId, player) {
+export function registerNewOwner(user) {
     return (dispatch, getState) => {
         const { owner } = getState();
         const ownerData = owner.ownerData;
         let newOwnerData = JSON.parse(JSON.stringify(ownerData));
 
-        const ownerToBeUpdated = newOwnerData.owners.filter((owner) => { return owner.id === ownerId})[0];
+        if (!newOwnerData.owners) { newOwnerData.owners = []; }
+
+        newOwnerData.owners.push({
+            user: {
+                uid: user.uid,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+            },
+            players: []
+        });
+
+        dispatch(writeOwnerData(newOwnerData));
+    }
+}
+
+export function addPlayerToRoster(userUid, player) {
+    return (dispatch, getState) => {
+        const state = getState();
+        const ownerData = state.owner.ownerData;
+        let newOwnerData = JSON.parse(JSON.stringify(ownerData));
+
+        const ownerToBeUpdated = newOwnerData.owners.filter((potentialOwner) => { 
+            return potentialOwner.user.uid === userUid
+        })[0];
         if (!ownerToBeUpdated.players) { ownerToBeUpdated.players = []; }
         ownerToBeUpdated.players.push(player.id);
 
         newOwnerData.owners = [
-            ...newOwnerData.owners.filter((owner) => { return owner.id !== ownerToBeUpdated.id}),
+            ...newOwnerData.owners.filter((owner) => { return owner.user.uid !== ownerToBeUpdated.user.uid}),
             ownerToBeUpdated
         ];
         
@@ -27,18 +50,18 @@ export function addPlayerToRoster(ownerId, player) {
     }
 }
 
-export function removePlayerFromRoster(ownerId, player) {
+export function removePlayerFromRoster(userUid, player) {
     return (dispatch, getState) => {
-        const { owner } = getState();
-        const ownerData = owner.ownerData;
+        const state = getState();
+        const ownerData = state.owner.ownerData;
         let newOwnerData = JSON.parse(JSON.stringify(ownerData));
 
-        const ownerToBeUpdated = newOwnerData.owners.filter((owner) => { return owner.id === ownerId})[0];
+        const ownerToBeUpdated = newOwnerData.owners.filter((owner) => { return owner.user.uid === userUid})[0];
         if (!ownerToBeUpdated.players) { ownerToBeUpdated.players = []; }
         ownerToBeUpdated.players = ownerToBeUpdated.players.filter((playerId) => { return playerId !== player.id});
 
         newOwnerData.owners = [
-            ...newOwnerData.owners.filter((owner) => { return owner.id !== ownerToBeUpdated.id}),
+            ...newOwnerData.owners.filter((owner) => { return owner.user.uid !== ownerToBeUpdated.user.uid}),
             ownerToBeUpdated
         ];
 

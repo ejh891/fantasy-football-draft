@@ -58,24 +58,6 @@ class PlayerList extends Component {
         this.props.filterDrawerActions.setFilterDrawerOpen(true);
     }
 
-    getTeamColorsStyle = (team) => {
-        if (!team) { return {}; }
-
-        let gradientColorStops = [];
-        const colorStopPercentage = (100 / team.colors.length).toFixed(0);
-        for (let i=0; i<team.colors.length; ++i) {
-            const rgb = colorUtil.hexToRgb(team.colors[i]);
-            gradientColorStops.push(`rgba(${rgb.r},${rgb.g},${rgb.b},0.20) ${i*colorStopPercentage}%`);
-            gradientColorStops.push(`rgba(${rgb.r},${rgb.g},${rgb.b},0.20) ${(i+1)*colorStopPercentage}%`);
-        }
-
-        gradientColorStops = gradientColorStops.slice(1, gradientColorStops.length - 1);
-
-        return {
-            backgroundImage: `linear-gradient(-30deg, ${gradientColorStops.join(',')})`
-        }; 
-    }
-
     getPageContent = () => {
         if (this.props.discoveringPlayers) {
             return (
@@ -99,7 +81,6 @@ class PlayerList extends Component {
                         <TableBody displayRowCheckbox={false}>
                             {
                                 this.getPlayersOnThisPage().map((player) => {
-                                    const teamColorsStyle = this.getTeamColorsStyle(player.team);
                                     return (
                                         <TableRow key={player.id}>
                                             <TableRowColumn>{player.overallRank}</TableRowColumn>

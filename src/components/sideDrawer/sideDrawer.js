@@ -16,10 +16,11 @@ import * as filterDrawerActions from '../../redux/actions/filterDrawerActions';
 
 import style from './style';
 
-class FilterDrawer extends Component {
+class SideDrawer extends Component {
     signOut = () => {
         firebaseAuth().signOut();
         this.props.appActions.setCurrentAppPage(appPages.logIn);
+        this.closeDrawer();
     }
 
     filterPlayersByPosition = (position) => {
@@ -32,6 +33,10 @@ class FilterDrawer extends Component {
 
         this.props.playerListActions.setFilteredPlayers(filteredPlayers);
         this.props.playerListActions.setCurrentPageNumber(1); // go back to the first page after filtering
+        this.closeDrawer();
+    }
+
+    closeDrawer = () => {
         this.props.filterDrawerActions.setFilterDrawerOpen(false);
     }
 
@@ -43,6 +48,10 @@ class FilterDrawer extends Component {
                 docked={false}
                 width={200}
                 open={this.props.filterDrawerOpen}
+                onRequestChange={(open) => {
+                    console.log(open);
+                    this.props.filterDrawerActions.setFilterDrawerOpen(open);
+                }}
             >
             <div style={style.userInfo}>
                 <Avatar
@@ -79,4 +88,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(FilterDrawer);
+export default connect(mapStateToProps, mapDispatchToProps)(SideDrawer);

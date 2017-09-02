@@ -35,12 +35,12 @@ export function addChunkOfPlayers(players) {
 }
 
 
-// sets the player details for the given player
-export function setPlayerDetails(playerId, playerDetails) {
+// sets properties for a given player
+export function setPlayerProps(playerId, props) {
     return {
-        type: actionTypes.SET_PLAYER_DETAILS,
+        type: actionTypes.SET_PLAYER_PROPS,
         playerId,
-        playerDetails
+        props
     }
 }
 
@@ -117,8 +117,10 @@ export function discoverPlayerDetails(playerId) {
             }
         })
             .then((res) => {
-                console.log(res);
-                dispatch(setPlayerDetails(playerId, res.data.players[0]));
+                const propsToAddToPlayer = {
+                    notes: res.data.players[0].notes
+                }
+                dispatch(setPlayerProps(playerId, propsToAddToPlayer));
                 dispatch(playerDetailsActions.setPlayerDetailsLoading(false));
             });
     }

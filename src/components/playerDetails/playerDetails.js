@@ -13,6 +13,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
 
 import * as appActions from '../../redux/actions/appActions';
+import * as playerListActions from '../../redux/actions/playerListActions';
 import * as playerDetailsActions from '../../redux/actions/playerDetailsActions';
 import * as ownerActions from '../../redux/actions/ownerActions';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
@@ -37,34 +38,51 @@ class PlayerDetails extends Component {
                 return playerId === this.props.playerDetailsPlayer.id;
             });
 
-            if (matchingPlayers) {
+            if (matchingPlayers.length > 0) {
                 return owner;
             }
         }
+    }
 
-        return null;
+    draftPlayer = () => {
+        this.props.ownerActions.addPlayerToRoster(this.props.user.uid, this.props.playerDetailsPlayer);
+    }
+
+    dropPlayer = () => {
+        this.props.ownerActions.removePlayerFromRoster(this.props.user.uid, this.props.playerDetailsPlayer);
+    }
+
+    getDropButton = (playerOwner) => {
+        // if current user is the owner, show the drop button
+        if (playerOwner.user.uid === this.props.user.uid) {
+            return (
+                <FloatingActionButton 
+                    style={style.floatingActionButton}
+                    backgroundColor={'#F44336'}
+                    onClick={this.dropPlayer}
+                >
+                    <ContentRemove />
+                </FloatingActionButton>
+            )
+        } else {
+            return null;
+        }
     }
 
     getActionBar = () => {
-        const owner = this.getOwner();
+        const playerOwner = this.getOwner();
 
-        if (owner) {
+        if (playerOwner) {
             return (
                 <div style={style.actionBar}>
                     <Chip>
                         <Avatar
-                            src={owner.avatarSrc}
+                            src={playerOwner.user.photoURL}
                         />
-                        {`Owned by ${owner.name}`}
+                        {`Owned by ${playerOwner.user.displayName}`}
                     </Chip>
 
-                    <FloatingActionButton 
-                        style={style.floatingActionButton}
-                        backgroundColor={'#F44336'}
-                        onClick={() => {this.props.ownerActions.removePlayerFromRoster(0, this.props.playerDetailsPlayer)}}
-                    >
-                        <ContentRemove />
-                    </FloatingActionButton>
+                    {this.getDropButton(playerOwner)}
                 </div>
             )
         } else {
@@ -72,10 +90,37 @@ class PlayerDetails extends Component {
                 <FloatingActionButton 
                     style={style.floatingActionButton}
                     backgroundColor={'#4CAF50'}
-                    onClick={() => {this.props.ownerActions.addPlayerToRoster(0, this.props.playerDetailsPlayer)}}
+                    onClick={this.draftPlayer}
                 >
                     <ContentAdd />
                 </FloatingActionButton>
+            )
+        }
+    }
+
+    getNews = () => {
+        if (this.props.playerDetailsPlayer.notes.length === 0) {
+            return (
+                <div>No recent news</div>
+            )
+        } else {
+            const player = this.props.playerDetailsPlayer;
+            return (
+                <div>
+                    {this.props.playerDetailsPlayer.notes.map((note) => {
+                        const dateData = dateUtil.parseTimestamp(note.timestamp);
+                        return (
+                            <div key={note.id}>
+                                <h3 style={{fontStyle: 'italic', fontWeight: 400}}>{dateData.date + ' (' + dateData.fromNow + ')'}</h3>
+                                <h4 style={{fontWeight: 'bold'}}>Story</h4>
+                                <div>{note.body}</div>
+                                <h4 style={{fontWeight: 'bold'}}>Analysis</h4>
+                                <div>{note.analysis}</div>
+                                <hr/>
+                            </div>
+                        )
+                    })}
+                </div>
             )
         }
     }
@@ -85,14 +130,9 @@ class PlayerDetails extends Component {
         
         if (this.props.playerDetailsLoading) {
             return (<LoadingSpinner loadingMessage={'Getting the latest news'}/>);
-        }
-
-        if (this.props.playerDetailsPlayer.notes.length === 0) {
-            return (
-                <div>No recent news</div>
-            )
         } else {
             const player = this.props.playerDetailsPlayer;
+            
             return (
                 <div>
                     <div style={style.marquee}>
@@ -111,19 +151,7 @@ class PlayerDetails extends Component {
                         </div>
                     </div>
                     {this.getActionBar()}
-                    {this.props.playerDetailsPlayer.notes.map((note) => {
-                        const dateData = dateUtil.parseTimestamp(note.timestamp);
-                        return (
-                            <div key={note.id}>
-                                <h3 style={{fontStyle: 'italic', fontWeight: 400}}>{dateData.date + ' (' + dateData.fromNow + ')'}</h3>
-                                <h4 style={{fontWeight: 'bold'}}>Story</h4>
-                                <div>{note.body}</div>
-                                <h4 style={{fontWeight: 'bold'}}>Analysis</h4>
-                                <div>{note.analysis}</div>
-                                <hr/>
-                            </div>
-                        )
-                    })}
+                    {this.getNews()}
                 </div>
             )
         }
@@ -154,12 +182,14 @@ const mapStateToProps = (state, props) => {
         playerDetailsLoading: state.playerDetails.playerDetailsLoading,
         playerDetailsPlayer: state.playerDetails.playerDetailsPlayer,
         ownerData: state.owner.ownerData,
+        user: state.auth.user,
 	};
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
         appActions: bindActionCreators(appActions, dispatch),
+        playerListActions: bindActionCreators(playerListActions, dispatch),
         playerDetailsActions: bindActionCreators(playerDetailsActions, dispatch),
         ownerActions: bindActionCreators(ownerActions, dispatch),
     }

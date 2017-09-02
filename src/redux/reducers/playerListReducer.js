@@ -30,10 +30,10 @@ export default (state = defaultState, action) => {
                 ...state,
                 allPlayers: [...state.allPlayers, ...action.players]
             }
-        case actionTypes.SET_PLAYER_DETAILS:
+        case actionTypes.SET_PLAYER_PROPS:
             const modifiedAllPlayersClone = state.allPlayers.map((player) => {
                 if (player.id === action.playerId) {
-                    player.notes = action.playerDetails.notes;
+                    return Object.assign(player, action.props);
                 }
 
                 return player;
