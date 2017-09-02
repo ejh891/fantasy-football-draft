@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import ImageLoader from 'react-imageloader';
 
 import AppBar from 'material-ui/AppBar';
+import Avatar from 'material-ui/Avatar';
 import CircularProgress from 'material-ui/CircularProgress';
 import IconButton from 'material-ui/IconButton';
 import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
@@ -40,13 +40,12 @@ class PlayerDetails extends Component {
             return (
                 <div>
                     <div style={style.marquee}>
-                        <div style={{...style.portraitWrapper, backgroundImage: `url(${player.team.logoSrc})`}}>
-                            <ImageLoader
+                        <div style={{...style.portraitWrapper}}>
+                            <Avatar
                                 src={player.portraitSrc}
-                                alt={player.fullName}
-                                preloader={this.getImageLoadingSpinner}
-                            >
-                            </ImageLoader>
+                                size={175}
+                                style={{border: `8px solid ${player.team.colors[0]}`, backgroundImage: `url(${player.team.logoSrc})`}}
+                            />
                         </div>
                         <div style={style.details}>
                             <h3>{`${player.position} - ${player.teamAbbr}`}</h3>

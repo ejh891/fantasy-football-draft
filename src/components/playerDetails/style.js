@@ -1,6 +1,7 @@
 const style = {
     marquee: {
         display: 'flex',
+        marginTop: '10px',
     },
     portraitWrapper: {
         flex: '1 0 auto',
