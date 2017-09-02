@@ -6,15 +6,28 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
  
 import './app.css';
 import * as appActions from '../../redux/actions/appActions';
+import * as ownerActions from '../../redux/actions/ownerActions';
 import appPages from '../../enums/appPages';
 import PlayerList from '../playerList/playerList';
 import PlayerDetails from '../playerDetails/playerDetails';
+import owners from '../../data/owners';
 
 // Needed for onTouchTap 
 // http://stackoverflow.com/a/34015469/988941 
 injectTapEventPlugin();
 
 class App extends Component {
+    componentDidMount() {
+        let ownerDataRef = window.firebase.database().ref('ownerData/');
+        ownerDataRef.on('value', this.updateOwnerDataFromServer);
+        this.props.ownerActions.writeOwnerData({owners});
+    }
+
+    updateOwnerDataFromServer = (snapshot) => {
+        console.log(snapshot);
+        this.props.ownerActions.readOwnerData(snapshot.val());
+    }
+
     getPage = () => {
         switch (this.props.currentPage) {
             case appPages.playerList:
@@ -46,7 +59,8 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        appActions: bindActionCreators(appActions, dispatch)
+        appActions: bindActionCreators(appActions, dispatch),
+        ownerActions: bindActionCreators(ownerActions, dispatch),
     }
 };
 
